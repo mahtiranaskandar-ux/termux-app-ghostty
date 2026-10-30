@@ -106,22 +106,26 @@ public final class TerminalBuffer {
     }
 
     public String getWordAtLocation(int x, int y) {
+        if (x < 0 || x >= mColumns || y < -mActiveTranscriptRows || y >= mScreenRows) return "";
         // Set y1 and y2 to the lines where the wrapped line starts and ends.
         // I.e. if a line that is wrapped to 3 lines starts at line 4, and this
         // is called with y=5, then y1 would be set to 4 and y2 would be set to 6.
         int y1 = y;
         int y2 = y;
-        while (y1 > 0 && !getSelectedText(0, y1 - 1, mColumns, y, true, true).contains("\n")) {
+        while (y1 > -mActiveTranscriptRows && !getSelectedText(0, y1 - 1, mColumns, y, true, true).contains("\n")) {
             y1--;
         }
-        while (y2 < mScreenRows && !getSelectedText(0, y, mColumns, y2 + 1, true, true).contains("\n")) {
+        while (y2 < mScreenRows - 1 && !getSelectedText(0, y, mColumns, y2 + 1, true, true).contains("\n")) {
             y2++;
         }
 
         // Get the text for the whole wrapped line
         String text = getSelectedText(0, y1, mColumns, y2, true, true);
         // The index of x in text
-        int textOffset = (y - y1) * mColumns + x;
+        int textOffset = mLines[externalToInternalRow(y)].findStartOfColumn(x);
+        for (int row = y1; row < y; row++) {
+            textOffset += mLines[externalToInternalRow(row)].getSpaceUsed();
+        }
 
         if (textOffset >= text.length()) {
           // The click was to the right of the last word on the line, so
@@ -234,7 +238,8 @@ public final class TerminalBuffer {
             // Copy away old state and update new:
             TerminalRow[] oldLines = mLines;
             mLines = new TerminalRow[newTotalRows];
-            for (int i = 0; i < newTotalRows; i++)
+            // Allocate history only as it is populated by scrolling during reflow.
+            for (int i = 0; i < newRows; i++)
                 mLines[i] = new TerminalRow(newColumns, currentStyle);
 
             final int oldActiveTranscriptRows = mActiveTranscriptRows;

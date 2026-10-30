@@ -45,6 +45,9 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
         if (key == null) return;
 
         switch (key) {
+            case "terminal_bidi_enabled":
+                mPreferences.setTerminalBidiEnabled(value);
+                break;
             case "terminal_margin_adjustment":
                     mPreferences.setTerminalMarginAdjustment(value);
                 break;
@@ -58,6 +61,8 @@ class TerminalViewPreferencesDataStore extends PreferenceDataStore {
         if (mPreferences == null) return false;
 
         switch (key) {
+            case "terminal_bidi_enabled":
+                return mPreferences.isTerminalBidiEnabled();
             case "terminal_margin_adjustment":
                 return mPreferences.isTerminalMarginAdjustmentEnabled();
             default:

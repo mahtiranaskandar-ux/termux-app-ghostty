@@ -1560,6 +1560,10 @@ public final class TerminalView extends SurfaceView implements SurfaceHolder.Cal
         return selectionRowShift;
     }
 
+    /** Kept for settings compatibility; bidi shaping is not handled by the Ghostty renderer. */
+    public void setBidiEnabled(boolean enabled) {
+    }
+
     public int getCellWidth() {
         return mCellWidth;
     }

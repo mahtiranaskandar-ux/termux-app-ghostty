@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="application_name">Termux</string>
+    <string name="shared_user_label">مستخدم Termux</string>
+
+    <string name="permission_run_command_label">تشغيل الأوامر في بيئة Termux</string>
+    <string name="permission_run_command_description">تنفيذ أوامر في بيئة Termux والوصول إلى الملفات</string>
+
+    <string name="bootstrap_installer_body">جارٍ تثبيت الحزم الأساسية…</string>
+    <string name="bootstrap_error_title">تعذّر تثبيت الحزم الأساسية</string>
+    <string name="bootstrap_error_body">تعذّر على Termux تثبيت الحزم الأساسية.</string>
+    <string name="bootstrap_error_abort">إلغاء</string>
+    <string name="bootstrap_error_try_again">إعادة المحاولة</string>
+    <string name="bootstrap_error_not_primary_user_message">يمكن تشغيل Termux بحساب المستخدم الأساسي فقط.\nتحتوي البرامج المبنية لـ Termux على مسار $PREFIX ثابت، ولا يمكن تثبيتها في مسار آخر غير:\n%1$s.</string>
+    <string name="bootstrap_error_installed_on_portable_sd">لا يمكن تثبيت Termux على بطاقة ذاكرة خارجية أو قابلة للإزالة.\nتحتوي البرامج المبنية لـ Termux على مسار $PREFIX ثابت، ولا يمكن تثبيتها في مسار آخر غير:\n%1$s.</string>
+
+    <string name="action_new_session">جلسة جديدة</string>
+    <string name="action_new_session_failsafe">وضع الإنقاذ</string>
+    <string name="title_max_terminals_reached">بلغت الحد الأقصى للجلسات</string>
+    <string name="msg_max_terminals_reached">أغلق بعض الجلسات الحالية قبل إنشاء جلسة جديدة.</string>
+    <string name="title_rename_session">تسمية الجلسة</string>
+    <string name="action_rename_session_confirm">حفظ</string>
+    <string name="title_create_named_session">جلسة جديدة باسم</string>
+    <string name="action_create_named_session_confirm">إنشاء</string>
+    <string name="action_toggle_soft_keyboard">لوحة المفاتيح</string>
+    <string name="msg_enabling_terminal_toolbar">جارٍ إظهار شريط أدوات الطرفية</string>
+    <string name="msg_disabling_terminal_toolbar">جارٍ إخفاء شريط أدوات الطرفية</string>
+
+    <string name="action_select_url">تحديد رابط</string>
+    <string name="title_select_url_dialog">انقر على الرابط لنسخه أو اضغط مطولًا لفتحه</string>
+    <string name="title_select_url_none_found">لم يُعثر على روابط في الطرفية.</string>
+    <string name="msg_select_url_copied_to_clipboard">نُسخ الرابط إلى الحافظة</string>
+    <string name="action_share_transcript">مشاركة سجل الطرفية</string>
+    <string name="title_share_transcript">سجل الطرفية</string>
+    <string name="title_share_transcript_with">إرسال السجل إلى:</string>
+    <string name="action_share_selected_text">مشاركة النص المحدد</string>
+    <string name="title_share_selected_text">نص الطرفية</string>
+    <string name="title_share_selected_text_with">إرسال النص المحدد إلى:</string>
+    <string name="action_autofill_username">ملء اسم المستخدم تلقائيًا</string>
+    <string name="action_autofill_password">ملء كلمة المرور تلقائيًا</string>
+    <string name="action_reset_terminal">إعادة الضبط</string>
+    <string name="msg_terminal_reset">أُعيد ضبط الطرفية</string>
+    <string name="action_kill_process">إنهاء العملية (%d)</string>
+    <string name="title_confirm_kill_process">هل تريد إنهاء هذه الجلسة؟</string>
+    <string name="action_style_terminal">المظهر</string>
+    <string name="action_toggle_keep_screen_on">إبقاء الشاشة مضاءة</string>
+    <string name="action_open_help">المساعدة</string>
+    <string name="action_open_settings">الإعدادات</string>
+    <string name="action_report_issue">الإبلاغ عن مشكلة</string>
+    <string name="msg_generating_report">جارٍ إنشاء التقرير</string>
+    <string name="msg_add_termux_debug_info">هل تريد إضافة معلومات تشخيص Termux إلى التقرير؟</string>
+    <string name="error_styling_not_installed">إضافة Termux:Styling غير مثبتة.</string>
+    <string name="action_styling_install">تثبيت</string>
+
+    <string name="notification_action_exit">خروج</string>
+    <string name="notification_action_wake_lock">منع السكون</string>
+    <string name="notification_action_wake_unlock">السماح بالسكون</string>
+
+    <string name="error_display_over_other_apps_permission_not_granted_to_start_terminal">يحتاج Termux إلى إذن \"الظهور فوق التطبيقات الأخرى\" لبدء جلسات الطرفية من الخلفية على Android 10 أو أحدث. امنحه من الإعدادات ← التطبيقات ← Termux ← خيارات متقدمة.</string>
+    <string name="error_termux_service_invalid_execution_command_runner">مشغّل أمر غير صالح لـ TermuxService: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_runner">مشغّل أمر غير مدعوم في TermuxService: `%1$s`</string>
+    <string name="error_termux_service_unsupported_execution_command_shell_create_mode">وضع إنشاء صدفة غير مدعوم في TermuxService: `%1$s`</string>
+    <string name="error_termux_service_execution_command_shell_name_unset">لم يُحدّد اسم الصدفة، لكن مُرّر وضع إنشاء الصدفة `%1$s`</string>
+    <string name="error_run_command_service_invalid_intent_action">إجراء Intent غير صالح لـ RunCommandService: `%1$s`</string>
+    <string name="error_run_command_service_invalid_execution_command_runner">مشغّل أمر غير صالح لـ RunCommandService: `%1$s`</string>
+    <string name="error_run_command_service_mandatory_extra_missing">بيان إضافي مطلوب مفقود في RunCommandService: \"%1$s\"</string>
+    <string name="error_run_command_service_api_help">زر %1$s لمزيد من المعلومات حول استخدام RUN_COMMAND Intent.</string>
+
+    <string name="title_file_received">حفظ الملف في ‎~/downloads/‎</string>
+    <string name="action_file_received_edit">تحرير</string>
+    <string name="action_file_received_open_directory">فتح المجلد</string>
+    <string name="error_termux_service_start_failed_general">تعذّر بدء TermuxService. راجع logcat للاطلاع على رسالة الاستثناء.</string>
+    <string name="error_termux_service_start_failed_bg">تعذّر بدء TermuxService أثناء وجود التطبيق في الخلفية بسبب قيود Android.</string>
+
+    <string name="title_activity_termux_settings">إعدادات Termux</string>
+    <string name="termux_preferences_title">Termux</string>
+    <string name="termux_preferences_summary">تفضيلات تطبيق Termux</string>
+    <string name="termux_debugging_preferences_title">التشخيص</string>
+    <string name="termux_debugging_preferences_summary">تفضيلات تشخيص الأخطاء</string>
+    <string name="termux_logging_header">التسجيل</string>
+    <string name="termux_log_level_title">مستوى التسجيل</string>
+    <string name="termux_terminal_view_key_logging_enabled_title">تسجيل مفاتيح الطرفية</string>
+    <string name="termux_terminal_view_key_logging_enabled_off">لن تُسجّل مفاتيح الطرفية. (الافتراضي)</string>
+    <string name="termux_terminal_view_key_logging_enabled_on">ستُسجّل مفاتيح الطرفية في logcat. هذه السجلات غزيرة جدًا، ويجب تعطيلها في الاستخدام العادي لتجنب مشاكل الأداء.</string>
+    <string name="termux_plugin_error_notifications_enabled_title">إشعارات أخطاء الإضافات</string>
+    <string name="termux_plugin_error_notifications_enabled_off">تعطيل التنبيهات والإشعارات لأخطاء الإضافات.</string>
+    <string name="termux_plugin_error_notifications_enabled_on">إظهار التنبيهات والإشعارات لأخطاء الإضافات. (الافتراضي)</string>
+    <string name="termux_crash_report_notifications_enabled_title">إشعارات تقارير التعطّل</string>
+    <string name="termux_crash_report_notifications_enabled_off">تعطيل إشعارات تقارير التعطّل.</string>
+    <string name="termux_crash_report_notifications_enabled_on">إظهار إشعارات تقارير التعطّل. (الافتراضي)</string>
+
+    <string name="termux_terminal_io_preferences_title">إدخال الطرفية وإخراجها</string>
+    <string name="termux_terminal_io_preferences_summary">تفضيلات إدخال الطرفية وإخراجها</string>
+    <string name="termux_keyboard_header">لوحة المفاتيح</string>
+    <string name="termux_soft_keyboard_enabled_title">تفعيل لوحة المفاتيح على الشاشة</string>
+    <string name="termux_soft_keyboard_enabled_off">ستُعطّل لوحة المفاتيح على الشاشة.</string>
+    <string name="termux_soft_keyboard_enabled_on">ستُفعّل لوحة المفاتيح على الشاشة. (الافتراضي)</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_title">لوحة الشاشة عند غياب لوحة فعلية فقط</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_off">تفعيل لوحة المفاتيح على الشاشة حتى عند توصيل لوحة مفاتيح فعلية. (الافتراضي)</string>
+    <string name="termux_soft_keyboard_enabled_only_if_no_hardware_on">تفعيل لوحة المفاتيح على الشاشة فقط عند عدم توصيل لوحة مفاتيح فعلية.</string>
+
+    <string name="termux_terminal_view_preferences_title">عرض الطرفية</string>
+    <string name="termux_terminal_view_preferences_summary">تفضيلات عرض الطرفية</string>
+    <string name="termux_terminal_view_view_header">العرض</string>
+    <string name="termux_terminal_bidi_title">العربية والنص ثنائي الاتجاه</string>
+    <string name="termux_terminal_bidi_summary">وصل الحروف العربية وعرض النص من اليمين إلى اليسار بترتيب القراءة. يحتفظ النسخ بالنص الأصلي. عطّل هذا الخيار للتطبيقات التي ترتّب النص بنفسها.</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_title">ضبط هوامش الطرفية</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_off">سيُعطّل ضبط هوامش الطرفية.</string>
+    <string name="termux_terminal_view_terminal_margin_adjustment_on">سيُفعّل ضبط هوامش الطرفية لمعالجة تغطية لوحة المفاتيح لجزء من المفاتيح الإضافية أو الطرفية. عطّله إذا تسبب في وميض الشاشة على جهازك. (الافتراضي)</string>
+
+    <string name="termux_api_preferences_title">Termux:API</string>
+    <string name="termux_api_preferences_summary">تفضيلات تطبيق Termux:API</string>
+    <string name="termux_float_preferences_title">Termux:Float</string>
+    <string name="termux_float_preferences_summary">تفضيلات تطبيق Termux:Float</string>
+    <string name="termux_tasker_preferences_title">Termux:Tasker</string>
+    <string name="termux_tasker_preferences_summary">تفضيلات تطبيق Termux:Tasker</string>
+    <string name="termux_widget_preferences_title">Termux:Widget</string>
+    <string name="termux_widget_preferences_summary">تفضيلات تطبيق Termux:Widget</string>
+    <string name="about_preference_title">حول التطبيق</string>
+    <string name="donate_preference_title">تبرّع</string>
+</resources>

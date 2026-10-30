@@ -62,4 +62,16 @@ public class ScreenBufferTest extends TerminalTestCase {
 		assertEquals("", mTerminal.getScreen().getWordAtLocation(1, 2));
 		assertEquals("", mTerminal.getScreen().getWordAtLocation(2, 2));
 	}
+
+	public void testWordAtUnicodeCellAndInHistory() {
+		withTerminalSized(20, 3).enterString("😀 سَلَام https://a.b");
+		assertEquals("سَلَام", mTerminal.getScreen().getWordAtLocation(3, 0));
+		assertEquals("سَلَام", mTerminal.getScreen().getWordAtLocation(6, 0));
+		assertEquals("https://a.b", mTerminal.getScreen().getWordAtLocation(8, 0));
+		assertEquals("", mTerminal.getScreen().getWordAtLocation(7, 0));
+		enterString("\r\n\r\n\r\n");
+		assertEquals("سَلَام", mTerminal.getScreen().getWordAtLocation(4, -1));
+		withTerminalSized(5, 3).enterString("😀abسَلام");
+		assertEquals("😀abسَلام", mTerminal.getScreen().getWordAtLocation(1, 1));
+	}
 }

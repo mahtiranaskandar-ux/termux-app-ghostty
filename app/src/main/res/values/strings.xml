@@ -232,6 +232,9 @@
         <string name="termux_terminal_view_preferences_title">Terminal View</string>
         <string name="termux_terminal_view_preferences_summary">Preferences for terminal view</string>
 
+        <string name="termux_terminal_bidi_title">Arabic and bidirectional text</string>
+        <string name="termux_terminal_bidi_summary">Join Arabic letters and display right-to-left text in reading order. Copying keeps the original text. Disable for terminal applications that arrange text themselves.</string>
+
             <!-- View Category -->
             <string name="termux_terminal_view_view_header">View</string>
 

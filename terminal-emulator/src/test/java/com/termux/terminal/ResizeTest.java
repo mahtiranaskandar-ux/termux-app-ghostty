@@ -2,6 +2,23 @@ package com.termux.terminal;
 
 public class ResizeTest extends TerminalTestCase {
 
+	public void testHorizontalResizeAllocatesOnlyUsedRowsWithCurrentStyle() {
+		TerminalBuffer screen = new TerminalBuffer(80, 10000, 24);
+		long style = TextStyle.encode(119, 129, 0);
+		screen.resize(100, 24, 10000, new int[] {0, 0}, style, false);
+		int allocated = 0;
+		for (TerminalRow row : screen.mLines) if (row != null) allocated++;
+		assertEquals(24, allocated);
+		for (int row = 1; row < 24; row++) {
+			for (int col = 0; col < 100; col++) assertEquals(style, screen.getStyleAt(row, col));
+		}
+		for (int i = 0; i < 30; i++) screen.scrollDownOneLine(0, 24, style);
+		assertEquals(30, screen.getActiveTranscriptRows());
+		assertEquals(style, screen.getStyleAt(23, 99));
+		screen.resize(60, 24, 10000, new int[] {0, 23}, style, false);
+		assertEquals(style, screen.getStyleAt(23, 59));
+	}
+
 	public void testResizeWhenHasHistory() {
 		final int cols = 3;
 		withTerminalSized(cols, 3).enterString("111222333444555666777888999").assertCursorAt(2, 2).assertLinesAre("777", "888", "999");

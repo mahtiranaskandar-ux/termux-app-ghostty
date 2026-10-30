@@ -27,6 +27,7 @@
                 android:layout_height="match_parent">
 
                 <com.termux.view.TerminalView
+                    android:layoutDirection="ltr"
                     android:id="@+id/terminal_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
