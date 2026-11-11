@@ -1,10 +1,12 @@
 name: Build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
       - ghostty
+      - work1
       - 'github-releases/**'
   pull_request:
     branches:
