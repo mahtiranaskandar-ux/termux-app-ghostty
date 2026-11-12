@@ -77,6 +77,7 @@ struct CachedTextGlyph {
 
 struct CachedTextRun {
     std::vector<CachedTextGlyph> glyphs;
+    int advance = 0;
 };
 
 struct FontSystem {
@@ -114,6 +115,7 @@ struct RenderCell {
     GhosttyStyle style{};
     GhosttyColorRgb foreground{};
     std::string text;
+    bool shaped = false;
 };
 
 struct KittyDrawPlacement {
@@ -779,6 +781,7 @@ CachedTextRun load_text_run(FontSystem *fonts, const uint8_t *bytes,
         pen_x += positions[i].x_advance / 64;
         pen_y -= positions[i].y_advance / 64;
     }
+    result.advance = pen_x;
     hb_buffer_destroy(buffer);
     return result;
 }
@@ -1149,13 +1152,91 @@ void draw_glyph(std::vector<uint8_t> *frame, uint32_t frame_width,
     }
 }
 
+bool is_arabic_codepoint(uint32_t cp) {
+    return (cp >= 0x0600 && cp <= 0x06ff) ||
+        (cp >= 0x0750 && cp <= 0x077f) ||
+        (cp >= 0x08a0 && cp <= 0x08ff) ||
+        (cp >= 0xfb50 && cp <= 0xfdff) ||
+        (cp >= 0xfe70 && cp <= 0xfeff);
+}
+
+bool is_arabic_cell(const RenderCell &cell) {
+    return cell.wide == GHOSTTY_CELL_WIDE_NARROW && !cell.style.invisible &&
+        !cell.text.empty() && is_arabic_codepoint(cell.codepoint);
+}
+
+bool is_blank_cell(const RenderCell &cell) {
+    return cell.wide == GHOSTTY_CELL_WIDE_NARROW &&
+        (cell.codepoint == 0 || cell.codepoint == 0x20);
+}
+
+void draw_arabic_run(TermuxVulkanRenderer *renderer, const std::string &text,
+                     uint32_t span_columns, int column, int top,
+                     GhosttyColorRgb color, const GhosttyStyle &style) {
+    FontSystem *fonts = &renderer->fonts;
+    const uint8_t *bytes = reinterpret_cast<const uint8_t *>(text.data());
+    CachedTextRun local;
+    const CachedTextRun *run = nullptr;
+    if (text.size() > TEXT_RUN_CACHE_MAX_KEY_BYTES) {
+        local = load_text_run(fonts, bytes, text.size(), style, span_columns);
+        run = &local;
+    } else {
+        TextRunKey key{text, style.bold, style.italic, span_columns};
+        auto found = fonts->text_runs.find(key);
+        if (found == fonts->text_runs.end()) {
+            if (fonts->text_runs.size() >= TEXT_RUN_CACHE_MAX_ENTRIES)
+                fonts->text_runs.clear();
+            found = fonts->text_runs.emplace(
+                std::move(key),
+                load_text_run(fonts, bytes, text.size(), style,
+                              span_columns)).first;
+        }
+        run = &found->second;
+    }
+    int span = static_cast<int>(span_columns * fonts->cell_width);
+    int offset = std::max(0, span - run->advance);
+    draw_text_run(*run, &renderer->frame, renderer->extent.width,
+                  renderer->extent.height,
+                  column * static_cast<int>(fonts->cell_width) + offset,
+                  top, color);
+}
+
+// Shape runs of Arabic cells as one unit so letters join and the run is
+// laid out right to left. Cells keep their grid columns for everything else.
+void draw_arabic_runs(TermuxVulkanRenderer *renderer) {
+    std::vector<RenderCell> &cells = renderer->render_cells;
+    size_t i = 0;
+    while (i < cells.size()) {
+        if (!is_arabic_cell(cells[i])) { ++i; continue; }
+        size_t first = i, last = i, j = i + 1;
+        while (j < cells.size() && cells[j].row == cells[first].row &&
+               cells[j].column == cells[j - 1].column + 1) {
+            if (is_arabic_cell(cells[j])) last = j;
+            else if (!is_blank_cell(cells[j])) break;
+            ++j;
+        }
+        std::string text;
+        for (size_t k = first; k <= last; ++k) {
+            text += is_arabic_cell(cells[k]) ? cells[k].text : std::string(" ");
+            cells[k].shaped = true;
+        }
+        draw_arabic_run(renderer, text,
+                        static_cast<uint32_t>(last - first + 1),
+                        cells[first].column,
+                        cells[first].row * static_cast<int>(
+                            renderer->fonts.cell_height),
+                        cells[first].foreground, cells[first].style);
+        i = last + 1;
+    }
+}
+
 void draw_cell_content(TermuxVulkanRenderer *renderer, const RenderCell &cell,
                        bool glyphs_available, GhosttyColorRgb color) {
     int left = cell.column * renderer->fonts.cell_width;
     int top = cell.row * renderer->fonts.cell_height;
     int right = (cell.column + 1) * renderer->fonts.cell_width;
     int bottom = (cell.row + 1) * renderer->fonts.cell_height;
-    if (!cell.style.invisible && !cell.text.empty() &&
+    if (!cell.style.invisible && !cell.text.empty() && !cell.shaped &&
         cell.codepoint != KITTY_UNICODE_PLACEHOLDER) {
         const CachedGlyph *glyph = glyphs_available
             ? glyph_for_codepoint(renderer, cell.codepoint)
@@ -1675,6 +1756,7 @@ bool compose_frame(TermuxVulkanRenderer *renderer, bool cursor_visible,
         draw_kitty_layer(renderer, kitty_graphics_handle,
                          GHOSTTY_RENDER_STATE_IMAGE_LAYER_BELOW_TEXT);
 
+    draw_arabic_runs(renderer);
     for (const auto &cell : renderer->render_cells) {
         draw_cell_content(renderer, cell, use_glyphs, cell.foreground);
     }
