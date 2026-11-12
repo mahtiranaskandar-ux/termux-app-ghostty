@@ -44,9 +44,7 @@
     <string name="title_confirm_kill_process">هل تريد إنهاء هذه الجلسة؟</string>
     <string name="action_style_terminal">المظهر</string>
     <string name="action_toggle_keep_screen_on">إبقاء الشاشة مضاءة</string>
-    <string name="action_open_help">المساعدة</string>
     <string name="action_open_settings">الإعدادات</string>
-    <string name="action_report_issue">الإبلاغ عن مشكلة</string>
     <string name="msg_generating_report">جارٍ إنشاء التقرير</string>
     <string name="msg_add_termux_debug_info">هل تريد إضافة معلومات تشخيص Termux إلى التقرير؟</string>
     <string name="error_styling_not_installed">إضافة Termux:Styling غير مثبتة.</string>
