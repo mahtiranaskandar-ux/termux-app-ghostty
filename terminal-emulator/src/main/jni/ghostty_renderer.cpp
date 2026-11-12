@@ -731,9 +731,42 @@ void fill_frame_rect(TermuxVulkanRenderer *renderer, int left, int top,
     }
 }
 
+constexpr double ARABIC_MIN_STRETCH = 0.6;
+constexpr double ARABIC_MAX_STRETCH = 2.0;
+
+void stretch_glyph_x(CachedTextGlyph *glyph, double scale) {
+    glyph->x = static_cast<int>(std::lround(glyph->x * scale));
+    if (glyph->width == 0 || glyph->height == 0) return;
+    uint32_t width = std::max<uint32_t>(
+        1, static_cast<uint32_t>(std::lround(glyph->width * scale)));
+    size_t channels = glyph->colored ? 4 : 1;
+    std::vector<uint8_t> pixels(
+        static_cast<size_t>(width) * glyph->height * channels);
+    for (uint32_t y = 0; y < glyph->height; ++y) {
+        for (uint32_t x = 0; x < width; ++x) {
+            double source_x = (x + 0.5) / scale - 0.5;
+            uint32_t x0 = static_cast<uint32_t>(
+                std::clamp(std::floor(source_x), 0.0,
+                           static_cast<double>(glyph->width - 1)));
+            uint32_t x1 = std::min(x0 + 1, glyph->width - 1);
+            double fx = std::clamp(source_x - x0, 0.0, 1.0);
+            for (size_t c = 0; c < channels; ++c) {
+                double a = glyph->pixels[
+                    (static_cast<size_t>(y) * glyph->width + x0) * channels + c];
+                double b = glyph->pixels[
+                    (static_cast<size_t>(y) * glyph->width + x1) * channels + c];
+                pixels[(static_cast<size_t>(y) * width + x) * channels + c] =
+                    static_cast<uint8_t>(std::lround(a * (1.0 - fx) + b * fx));
+            }
+        }
+    }
+    glyph->width = width;
+    glyph->pixels = std::move(pixels);
+}
+
 CachedTextRun load_text_run(FontSystem *fonts, const uint8_t *bytes,
                             size_t length, const GhosttyStyle &style,
-                            uint32_t cell_columns) {
+                            uint32_t cell_columns, bool stretch = false) {
     CachedTextRun result;
     Face *face = face_for_text(fonts, bytes, length, style.bold, style.italic);
     hb_buffer_t *buffer = hb_buffer_create();
@@ -780,6 +813,15 @@ CachedTextRun load_text_run(FontSystem *fonts, const uint8_t *bytes,
         result.glyphs.emplace_back(std::move(glyph));
         pen_x += positions[i].x_advance / 64;
         pen_y -= positions[i].y_advance / 64;
+    }
+    if (stretch && pen_x > 0) {
+        double target = static_cast<double>(fonts->cell_width) * cell_columns;
+        double scale = std::clamp(target / pen_x, ARABIC_MIN_STRETCH,
+                                  ARABIC_MAX_STRETCH);
+        if (std::abs(scale - 1.0) > 0.02) {
+            for (auto &glyph : result.glyphs) stretch_glyph_x(&glyph, scale);
+            pen_x = static_cast<int>(std::lround(pen_x * scale));
+        }
     }
     result.advance = pen_x;
     hb_buffer_destroy(buffer);
@@ -1178,10 +1220,10 @@ void draw_arabic_run(TermuxVulkanRenderer *renderer, const std::string &text,
     CachedTextRun local;
     const CachedTextRun *run = nullptr;
     if (text.size() > TEXT_RUN_CACHE_MAX_KEY_BYTES) {
-        local = load_text_run(fonts, bytes, text.size(), style, span_columns);
+        local = load_text_run(fonts, bytes, text.size(), style, span_columns, true);
         run = &local;
     } else {
-        TextRunKey key{text, style.bold, style.italic, span_columns};
+        TextRunKey key{text, style.bold, style.italic, span_columns | 0x8000u};
         auto found = fonts->text_runs.find(key);
         if (found == fonts->text_runs.end()) {
             if (fonts->text_runs.size() >= TEXT_RUN_CACHE_MAX_ENTRIES)
@@ -1189,7 +1231,7 @@ void draw_arabic_run(TermuxVulkanRenderer *renderer, const std::string &text,
             found = fonts->text_runs.emplace(
                 std::move(key),
                 load_text_run(fonts, bytes, text.size(), style,
-                              span_columns)).first;
+                              span_columns, true)).first;
         }
         run = &found->second;
     }
